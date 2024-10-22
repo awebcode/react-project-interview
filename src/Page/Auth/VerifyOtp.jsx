@@ -4,9 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { verifyOtp } from "../../services/auth";
 import { toast } from "react-toastify";
-import Input from "../../reusables/Input";
+import Input from "../../common/Input";
 import { otpSchema } from "../../schemas/authSchemas";
-import Title from "../../reusables/Title";
+import Title from "../../common/Title";
 import { Link } from "react-router-dom";
 
 const VerifyOTP = () => {
@@ -14,8 +14,7 @@ const VerifyOTP = () => {
     resolver: zodResolver(otpSchema),
     mode: "all",
   });
-  const { handleSubmit, control }= methods;
-
+  const { handleSubmit, control } = methods;
 
   const mutation = useMutation({
     mutationFn: verifyOtp,

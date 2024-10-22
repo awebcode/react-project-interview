@@ -5,24 +5,24 @@ import { loginSchema } from "../../schemas/authSchemas";
 import { loginUser } from "../../services/auth";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import Input from "../../reusables/Input";
-import Title from "../../reusables/Title";
+import Input from "../../common/Input";
+import Title from "../../common/Title";
 
 const Login = () => {
-  const methods= useForm({
+  const methods = useForm({
     resolver: zodResolver(loginSchema),
-    mode:"all"
+    mode: "all",
   });
   const { handleSubmit, control } = methods;
 
   const mutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      console.log({data})
+      console.log({ data });
       toast.success("Login successful");
     },
     onError: (error) => {
-      console.log({error})
+      console.log({ error });
       toast.error(error?.response?.data.message);
     },
   });

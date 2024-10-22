@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import PropTypes from "prop-types";
 
-const ImageInput = ({ onImageUpload, name, setValue, clearErrors, error }) => {
+const ImageInput = ({ onImageUpload, name,  clearErrors, error }) => {
   const [preview, setPreview] = useState(null);
 
   const onDrop = useCallback(
@@ -13,13 +13,12 @@ const ImageInput = ({ onImageUpload, name, setValue, clearErrors, error }) => {
         reader.onloadend = () => {
           setPreview(reader.result);
           onImageUpload(file); // Pass file to parent component
-          setValue(name, file); // Manually set value in react-hook-form
           clearErrors(name); // Clear any validation errors
         };
         reader.readAsDataURL(file);
       }
     },
-    [onImageUpload, name, setValue, clearErrors]
+    [onImageUpload, name,  clearErrors]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

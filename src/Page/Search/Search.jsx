@@ -1,33 +1,92 @@
-import React, { useState } from "react";
-import { IoMdSearch } from "react-icons/io";
+// components/SearchPurchaseForm.jsx
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { searchFormSchema } from "../../schemas/checkoutSchema";
+import { searchPurchaseForm } from "../../services/course";
+import Title from "../../common/Title";
+import Input from "../../common/Input";
+import OrderDetails from "../OrderDetails/OrderDetails";
 
 const Search = () => {
-    const [searchTerm, setSearchTerm] = useState("");
+  const methods = useForm({
+    resolver: zodResolver(searchFormSchema),
+    mode: "all",
+  });
 
-    const handleSearch = () => {
-        // Handle the search logic here
-        console.log("Searching for:", searchTerm);
-    };
+  const { reset, handleSubmit, control } = methods;
+  const [searchParams] = useSearchParams();
+  const [purchaseData, setPurchaseData] = useState(null); // State to hold purchase data
 
-    return (
-        <div className="min-h-screen flex flex-col text-text_40px font-bold items-center justify-center">
-            <h1 className="w-[600px] mx-auto">Search here</h1>
-            <div className="h-[52px] relative col-span-4 w-[600px] mx-auto">
-                <input
-                    type="text"
-                    name="search"
-                    placeholder="search"
-                    className="text-black px-2 w-full block h-full outline-0 rounded-[4px] border"
-                />
-                <IoMdSearch
+  const formNo = searchParams.get("form_no") || ""; // Default to an empty string if not found
+  const phoneNo = searchParams.get("phone_no") || ""; // Default to an empty string if not found
 
-                    className="text-2xl text-black absolute right-2 top-2"
-                />
-            </div> 
+  // Mutation to search for purchase data
+  const mutation = useMutation({
+    mutationFn: searchPurchaseForm,
+    onSuccess: (data) => {
+      // toast.success("Purchase found!");
+      setPurchaseData(data); // Store purchase data in state
+      localStorage.setItem("purchaseData", JSON.stringify(data));
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      setPurchaseData(null); // Clear previous data on error
+    },
+  });
+  // Function to handle the search
+  const handleSearch = useCallback(
+    (data) => {
+      mutation.mutate(data);
+    },
+    [mutation]
+  );
+  // Effect to handle pre-populating form and searching on URL change
+  useEffect(() => {
+    if (formNo && phoneNo) {
+      reset({ form_no: formNo, phone_no: phoneNo });
+      handleSearch({ form_no: formNo, phone_no: phoneNo });
+    } else {
+      localStorage.getItem("purchaseData") &&
+        setPurchaseData(JSON.parse(localStorage.getItem("purchaseData")));
+    }
+  }, [formNo, phoneNo, reset]);
 
+  const onSubmit = (data) => {
+    handleSearch(data);
+  };
+  return (
+    <FormProvider {...methods}>
+      <Title title="Search Purchase" className="text-center" />
+      <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto">
+        <Input name="form_no" label="Form Number" type="text" control={control} />
+        <Input name="phone_no" label="Phone Number" type="text" control={control} />
+        <button
+          className="btn btn-primary w-full mt-4"
+          type="submit"
+          disabled={mutation.isPending} // Use isPending for clarity
+        >
+          {mutation.isPending ? (
+            <div className="flex items-center gap-2">
+              <span className="loading loading-spinner"></span>
+              Searching...
+            </div>
+          ) : (
+            "Search"
+          )}
+        </button>
+      </form>
+
+      {purchaseData && (
+        <div className="mt-6 p-4 border rounded-lg">
+          <OrderDetails data={purchaseData} />
         </div>
-         
-    );
+      )}
+    </FormProvider>
+  );
 };
 
 export default Search;

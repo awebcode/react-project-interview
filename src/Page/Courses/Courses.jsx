@@ -1,4 +1,4 @@
-import Title from "../../reusables/Title";
+import Title from "../../common/Title";
 import { getCoursesList } from "../../services/course";
 import Loader from "../../Utils/Loader/Loader";
 import CourseCard from "./CourseCard";
@@ -19,7 +19,7 @@ const Courses = () => {
   return (
     <div className="">
       <Title title="Courses" />
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-4">
         {data &&
           data.courseData.map((course) => (
             <CourseCard

@@ -3,8 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import Input from "../../reusables/Input";
-import Title from "../../reusables/Title";
+import Input from "../../common/Input";
+import Title from "../../common/Title";
 import { forgotPasswordSchema } from "../../schemas/authSchemas"; // Ensure you have this schema for validation
 import { forgotPassword } from "../../services/auth"; // Update this service to handle forgot password
 

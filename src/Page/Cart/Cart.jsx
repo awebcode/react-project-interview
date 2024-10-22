@@ -2,8 +2,8 @@
 import { Link } from "react-router-dom";
 import useCartStore from "../../Hooks/useCartStore";
 import CartCard from "./CartCard"; // Import the CartCard component
-
-const Cart = () => {
+import Proptypes from "prop-types";
+const Cart = ({parentButton}) => {
   const { cart, getTotalPrice } = useCartStore();
 
   // Calculate total price
@@ -31,7 +31,7 @@ const Cart = () => {
                     Course
                   </th>
                   <th className="text-[14.4px] font-bold p-[7px] text-black">Price</th>
-                  <th className="text-[14.4px] font-bold p-[7px] text-black">Quantity</th>
+                  {/* <th className="text-[14.4px] font-bold p-[7px] text-black">Quantity</th> */}
                   <th className="text-[14.4px] font-bold p-[7px] text-black">
                     Sub Total
                   </th>
@@ -54,19 +54,26 @@ const Cart = () => {
                 <p className="text-black font-bold">{totalPrice}</p>{" "}
                 {/* Display total price */}
               </div>
-              <Link
-                to={`/cart/checkout`}
-                state={{ total: totalPrice }} // Pass total price to checkout
-                className="font-medium text-black mb-2 border-2 hover:bg-[#D2C5A2] duration-300 py-2 px-4 block text-center mx-auto w-full"
-              >
-                PROCEED TO CHECKOUT
-              </Link>
+              {parentButton ? (
+                parentButton
+              ) : (
+                <Link
+                  to={`/cart/checkout`}
+                  state={{ total: totalPrice }} // Pass total price to checkout
+                  className="btn btn-primary w-full m-2"
+                >
+                  PROCEED TO CHECKOUT
+                </Link>
+              )}
             </div>
           </div>
         </div>
       </div>
     </div>
   );
+};
+Cart.propTypes = {
+  parentButton: Proptypes.node,
 };
 
 export default Cart;

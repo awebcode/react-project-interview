@@ -10,7 +10,6 @@ import OrderDetails from "../Page/OrderDetails/OrderDetails";
 import Checkout from "../Page/Checkout/Checkout";
 import Search from "../Page/Search/Search";
 import { AuthRoutes } from "../Page/Auth/Auth.route";
-import SearchPurchaseFormData from "../Page/Checkout/SearchPurchaseFormData";
 
 const Router = createBrowserRouter([
   {
@@ -42,10 +41,7 @@ const Router = createBrowserRouter([
         path: "/checkout",
         element: <Checkout />,
       },
-      {
-        path: "/course/search-purchase-data",
-        element: <SearchPurchaseFormData />,
-      },
+      
       {
         path: "/search",
         element: <Search />,

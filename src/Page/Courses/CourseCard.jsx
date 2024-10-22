@@ -1,19 +1,16 @@
 import PropTypes from "prop-types"; // Import PropTypes
 import useCartStore from "../../Hooks/useCartStore";
 import { useTransition } from "react";
-import { Link } from "react-router-dom";
-
 const CourseCard = ({
   id,
   course_name = "Unnamed Course", // Default value if course_name is missing
-  course_qty=0,
+  course_qty = 0,
   trainer = "Unknown Trainer", // Default value for trainer
   regular_price = 0,
   discount_price = 0,
   photo = "https://via.placeholder.com/300", // Fallback image URL
 }) => {
-  const { addItem, isItemExists,removeItem, increaseItemQuantity, decreaseItemQuantity, cart } =
-    useCartStore();
+  const { addItem, removeItem, cart, getTotalItems } = useCartStore();
   const [isAdding, startTransition] = useTransition();
 
   // Safely convert prices to numbers and calculate the discount percentage
@@ -24,22 +21,29 @@ const CourseCard = ({
 
   const handleAddToCart = () => {
     startTransition(() => {
-      addItem({ id, course_name,course_qty, trainer, regular_price, discount_price, photo });
+      addItem({
+        id,
+        course_name,
+        course_qty,
+        trainer,
+        regular_price,
+        discount_price,
+        photo,
+      });
     });
   };
 
   const itemInCart = cart.find((item) => item.id === id);
-  const quantity = itemInCart ? itemInCart.course_qty : 0; // Get quantity from cart
   const finalPrice = itemInCart
     ? itemInCart.discount_price * itemInCart.course_qty
     : discount_price;
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-      <div className="relative">
+    <div className="bg-white shadow-xl rounded-b-lg rounded-t-xl overflow-hidden">
+      <div className="relative ">
         <img
           src={photo}
           alt={course_name}
-          className="w-full h-48 object-cover"
+          className="h-[18rem] sm:h-[22rem] w-full object-center"
           onError={(e) => {
             e.currentTarget.src = "https://via.placeholder.com/300"; // Fallback on error
             e.currentTarget.alt = "Image not found";
@@ -71,44 +75,20 @@ const CourseCard = ({
             <span className="text-green-600 text-md font-bold ml-2">
               -{discountPercentage}%
             </span>
-            <span className="text-black text-lg font-bold ml-2">
-              Tk {finalPrice}
-            </span>
+            <span className="text-black text-lg font-bold ml-2">Tk {finalPrice}</span>
           </div>
         </div>
 
         <div className="mt-4 flex gap-2">
-          {isItemExists(id) ? (
-            <div className="flex flex-col items-center gap-2">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => decreaseItemQuantity(id)}
-                  className="bg-gray-200 p-1 rounded-l"
-                  // disabled={quantity <= 1} // Disable if quantity is 1
-                >
-                  -
-                </button>
-                <span className="px-4 text-lg font-bold">{quantity}</span>
-                <button
-                  onClick={() => increaseItemQuantity(id)}
-                  className="bg-gray-200 p-1 rounded-r"
-                  // disabled={quantity >= maxQuantity} // Disable if quantity reaches max
-                >
-                  +
-                </button>
-                <button onClick={() => removeItem(id)} className="text-rose-400">
-                  Remove
-                </button>
-              </div>
-              <Link className="underline text-blue-500" to="/cart">
-                View
-              </Link>
-            </div>
+          {itemInCart ? (
+            <button onClick={() => removeItem(id)} className="btn btn-warning w-full">
+              Remove From Cart
+            </button>
           ) : (
             <button
               onClick={handleAddToCart}
-              className="btn btn-primary w-full"
-              disabled={isAdding}
+              className="btn btn-primary w-full disabled:cursor-not- disabled:bg-blue-400 disabled:text-white"
+              disabled={isAdding || getTotalItems() > 0}
             >
               {isAdding ? "Adding to Cart..." : "Add To Cart"}
             </button>

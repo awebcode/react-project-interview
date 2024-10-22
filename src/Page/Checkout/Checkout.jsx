@@ -1,11 +1,11 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { checkoutSchema } from "../../schemas/checkoutSchema";
-import Input from "../../reusables/Input";
-import Select from "../../reusables/Select";
-import Title from "../../reusables/Title";
-import ImageInput from "../../reusables/ImageInput";
-import { genderOptions, bloodGroupOptions } from "../../reusables/DATA";
+import Input from "../../common/Input";
+import Select from "../../common/Select";
+import Title from "../../common/Title";
+import ImageInput from "../../common/ImageInput";
+import { genderOptions, bloodGroupOptions } from "../../common/DATA";
 import { useMutation } from "@tanstack/react-query";
 import { savePurchaseForm } from "../../services/course";
 import { toast } from "react-toastify";
@@ -15,7 +15,7 @@ import Cart from "../Cart/Cart";
 
 const CheckoutForm = () => {
   const navigate = useNavigate();
-  const { getCartItems, getTotalPrice } = useCartStore();
+  const { getCartItems, getTotalPrice, clearCart } = useCartStore();
 
   const methods = useForm({
     resolver: zodResolver(checkoutSchema),
@@ -32,15 +32,18 @@ const CheckoutForm = () => {
   const mutation = useMutation({
     mutationFn: savePurchaseForm,
     onSuccess: (data) => {
-      console.log({ serverResponse: data });
+      // console.log({ serverResponse: data });
 
       toast.success("Form submitted successful");
+      clearCart();
+
       navigate(
-        "/course/search-purchase-data?form_no=" +
+        "/search?form_no=" +
           data.coursePurchaseData.form_no +
           "&phone_no=" +
           data.coursePurchaseData.phone_no
       );
+
       // Handle successful registration (e.g., navigate to login)
     },
     onError: (error) => {
@@ -93,9 +96,13 @@ const CheckoutForm = () => {
 
   return (
     <div className="py-4 px-2">
-      <FormProvider {...methods}>
-        <Title title="Checkout" />
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className={`space-y-4 ${getCartItems().length < 1 && "cursor-not-allowed"}`}
+      >
+        <FormProvider {...methods}>
+          <Title title="Checkout" />
+
           {/* name / email / phone */}
           <div className="flex w-full  items-center justify-center flex-wrap md:flex-nowrap gap-2">
             <Input name="name" label="Name*" type="text" />{" "}
@@ -156,24 +163,45 @@ const CheckoutForm = () => {
             />
           </div>
           {/* photo end */}
-
-          <button type="submit" className="btn btn-primary" disabled={mutation.isPending}>
-            {mutation.isPending ? (
-              <div className="flex items-center gap-2">
-                {" "}
-                <span className="loading loading-spinner"></span>
-                Submitting...
-              </div>
-            ) : (
-              "Submit"
-            )}
-          </button>
-
-          <Link className="text-blue-400 block underline" to="/course/search-purchase-data">Find Purchase Items</Link>
-        </form>
-      </FormProvider>
-      {/* Card */}
-      <Cart />
+        </FormProvider>
+        {/* Card */}
+        {getCartItems().length === 0 && (
+          <div className="w-full flex justify-center items-center py-10">
+            <p className="text-center text-lg font-semibold">
+              No item in the cart.{" "}
+              <Link to="/course" className="text-blue-500">
+                Please add some items first to checkout.
+              </Link>
+            </p>
+          </div>
+        )}
+        {getCartItems().length > 0 && (
+          <Cart
+            parentButton={
+              <>
+                <button
+                  type="submit"
+                  className="btn btn-primary w-full mt-4"
+                  disabled={mutation.isPending}
+                >
+                  {mutation.isPending ? (
+                    <div className="flex items-center gap-2">
+                      {" "}
+                      <span className="loading loading-spinner"></span>
+                      Submitting...
+                    </div>
+                  ) : (
+                    "Submit"
+                  )}
+                </button>
+                <Link className="text-blue-400 mt-2 block underline" to="/search">
+                  Purchase Items
+                </Link>
+              </>
+            }
+          />
+        )}
+      </form>
     </div>
   );
 };

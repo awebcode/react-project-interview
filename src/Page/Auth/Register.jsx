@@ -5,11 +5,11 @@ import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "../../services/auth";
 import { registerSchema } from "../../schemas/authSchemas";
 import { toast } from "react-toastify";
-import Select from "../../reusables/Select";
-import Title from "../../reusables/Title";
-import Input from "../../reusables/Input";
+import Select from "../../common/Select";
+import Title from "../../common/Title";
+import Input from "../../common/Input";
 import { Link } from "react-router-dom";
-import { genderOptions, roleOptions } from "../../reusables/DATA";
+import { genderOptions, roleOptions } from "../../common/DATA";
 const Register = () => {
   const methods = useForm({
     resolver: zodResolver(registerSchema),
@@ -33,7 +33,7 @@ const Register = () => {
   const onSubmit = (data) => {
     mutation.mutate({ password_confirmation: data.confirmPassword, ...data });
   };
-  
+
   return (
     <FormProvider {...methods}>
       <Title title="Register" className="text-center" />
