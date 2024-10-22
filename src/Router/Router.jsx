@@ -9,59 +9,66 @@ import Cart from "../Page/Cart/Cart";
 import OrderDetails from "../Page/OrderDetails/OrderDetails";
 import Checkout from "../Page/Checkout/Checkout";
 import Search from "../Page/Search/Search";
-
-
+import { AuthRoutes } from "../Page/Auth/Auth.route";
+import SearchPurchaseFormData from "../Page/Checkout/SearchPurchaseFormData";
 const Router = createBrowserRouter([
-    {
-        path: '/',
-        element: <Layout />,
-        children: [
-           
-            {
-                path: '/course',
-                element: <Courses />
-            },
-            {
-                path: '/cart',
-                element: <Cart></Cart>
-            },
-            {
-                path: '/checkout',
-                element: <Checkout />
-            },
-            {
-                path: '/search',
-                element: <Search />
-            },
-            {
-                path : '/order-details',
-                element : <OrderDetails />
-            },
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      // auth routes
+      ...AuthRoutes,
 
-           
-           
-        ]
-    },
-    {
-        path: 'admin-dashboard',
-        element: <Admin_Dashboard />,
-        children: [
-            {
-                path: 'general-setting',
-                element: <General_Setting />
-            },
-            {
-                path: 'user-list',
-                element: <User_List />
-            },
-            {
-                path: 'user-role',
-                element: <User_Role></User_Role>
-            }
-          
-        ]
-    }
-    
-])
+      {
+        path: "/course",
+        element: <Courses />,
+      },
+
+      {
+        path: "/cart",
+        element: <Cart></Cart>,
+      },
+      {
+        path: "/cart/checkout",
+        element: <Checkout />,
+      },
+
+      {
+        path: "/checkout",
+        element: <Checkout />,
+      },
+      {
+        path: "/course/search-purchase-data",
+        element: <SearchPurchaseFormData />,
+      },
+      {
+        path: "/search",
+        element: <Search />,
+      },
+      {
+        path: "/order-details",
+        element: <OrderDetails />,
+      },
+    ],
+  },
+  {
+    path: "admin-dashboard",
+    element: <Admin_Dashboard />,
+    children: [
+      {
+        path: "general-setting",
+        element: <General_Setting />,
+      },
+      {
+        path: "user-list",
+        element: <User_List />,
+      },
+      {
+        path: "user-role",
+        element: <User_Role></User_Role>,
+      },
+    ],
+  },
+]);
 
 export default Router;

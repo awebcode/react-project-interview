@@ -32,28 +32,28 @@ const AddUserModal = ({ fetchData, isOpen, setIsOpen }) => {
     const mobile = e.target.mobile.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-    const password_confirmation = e.target.password_confirmation.value;
+    const confirmPassword = e.target.confirmPassword.value;
     const gender = e.target.gender.value;
     const roles = e.target.roles.value;
     const image = e.target.image.files[0];
 
-    if (password !== password_confirmation) {
+    if (password !== confirmPassword) {
       return toast.error("password does not matched");
     }
 
-    if(mobile.length !== 11){
-      return toast.error("Mobile must be type 11")
+    if (mobile.length !== 11) {
+      return toast.error("Mobile must be type 11");
     }
 
-    const formData = new FormData()
-    formData.append('name', name)
-    formData.append('mobile', mobile)
-    formData.append('email', email)
-    formData.append('password', password)
-    formData.append('password_confirmation', password_confirmation)
-    formData.append('gender', gender)
-    formData.append('roles', roles)
-    image || formData.append('image', image)
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("mobile", mobile);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("confirmPassword", confirmPassword);
+    formData.append("gender", gender);
+    formData.append("roles", roles);
+    image || formData.append("image", image);
 
     try {
       const res = await axiosSecure.post(`/api/users`, formData);
@@ -103,10 +103,7 @@ const AddUserModal = ({ fetchData, isOpen, setIsOpen }) => {
                       className="border px-4 h-10 bg-bg_selected text-_white text-xl flex items-center justify-between pr-4"
                     >
                       <h6 className="">Upload New Image</h6>
-                      <button
-                        onClick={() => setIsOpen(false)}
-                        className="text-xl"
-                      >
+                      <button onClick={() => setIsOpen(false)} className="text-xl">
                         <IoMdClose />
                       </button>
                     </Dialog.Title>
@@ -138,7 +135,9 @@ const AddUserModal = ({ fetchData, isOpen, setIsOpen }) => {
                         </div>
                         <div className="form-control">
                           <label className="label">
-                            <span className="font-semibold label-text">Email Address</span>
+                            <span className="font-semibold label-text">
+                              Email Address
+                            </span>
                           </label>
                           <input
                             name="email"
@@ -162,10 +161,12 @@ const AddUserModal = ({ fetchData, isOpen, setIsOpen }) => {
                         </div>
                         <div className="form-control">
                           <label className="label">
-                            <span className="font-semibold label-text">Confirm Password</span>
+                            <span className="font-semibold label-text">
+                              Confirm Password
+                            </span>
                           </label>
                           <input
-                            name="password_confirmation"
+                            name="confirmPassword"
                             type="password"
                             placeholder="Confirm Password"
                             className="input input-bordered"
@@ -176,11 +177,7 @@ const AddUserModal = ({ fetchData, isOpen, setIsOpen }) => {
                           <label className="label">
                             <span className="font-semibold label-text">Gender </span>
                           </label>
-                          <select
-                            name="gender"
-                            className="input input-bordered"
-                            required
-                          >
+                          <select name="gender" className="input input-bordered" required>
                             <option value="" disabled selected>
                               Select Gender
                             </option>
@@ -193,22 +190,13 @@ const AddUserModal = ({ fetchData, isOpen, setIsOpen }) => {
                           <label className="label">
                             <span className="font-semibold label-text">Image</span>
                           </label>
-                          <input
-                            type="file"
-                            className=""
-                            name="image"
-                            id=""
-                          />
+                          <input type="file" className="" name="image" id="" />
                         </div>
                         <div className="form-control">
                           <label className="label">
                             <span className="font-semibold label-text">Select Role </span>
                           </label>
-                          <select
-                            name="roles"
-                            className="input input-bordered"
-                            required
-                          >
+                          <select name="roles" className="input input-bordered" required>
                             <option value="" disabled selected>
                               Select Role
                             </option>

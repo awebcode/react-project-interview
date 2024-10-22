@@ -1,294 +1,181 @@
-import React from "react";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { checkoutSchema } from "../../schemas/checkoutSchema";
+import Input from "../../reusables/Input";
+import Select from "../../reusables/Select";
+import Title from "../../reusables/Title";
+import ImageInput from "../../reusables/ImageInput";
+import { genderOptions, bloodGroupOptions } from "../../reusables/DATA";
+import { useMutation } from "@tanstack/react-query";
+import { savePurchaseForm } from "../../services/course";
+import { toast } from "react-toastify";
+import useCartStore from "../../Hooks/useCartStore";
+import { Link, useNavigate } from "react-router-dom";
+import Cart from "../Cart/Cart";
 
-const Checkout = () => {
-    return (
-        <div className="  mt-5 border mx-2">
-            <div class="bg-[#6f42c1] text-white p-6 text-center mb-5">
-                <h2 className='text-5xl font-bold'>Trainee Admission Form</h2>
-            </div>
-            <form className="bg-white shadow-md rounded-lg p-6">
-                {/* Trainee Information Section */}
-                <div className="form-section">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label htmlFor="fullName" className="block font-semibold text-base mb-2">Full Name:</label>
-                            <input
-                                type="text"
-                                id="fullName"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="formNo" className="block font-semibold text-base mb-2">Form no:</label>
-                            <input
-                                type="text"
-                                id="formNo"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                    </div>
+const CheckoutForm = () => {
+  const navigate = useNavigate();
+  const { getCartItems, getTotalPrice } = useCartStore();
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label htmlFor="parentName" className="block font-semibold text-base mb-2">Father/Mother Name:</label>
-                            <input
-                                type="text"
-                                id="parentName"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="parentNumber" className="block font-semibold text-base mb-2">Number:</label>
-                            <input
-                                type="text"
-                                id="parentNumber"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                    </div>
+  const methods = useForm({
+    resolver: zodResolver(checkoutSchema),
+    mode: "all",
+  });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    clearErrors,
+    formState: { errors },
+  } = methods;
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label htmlFor="school" className="block font-semibold text-base mb-2">School/College:</label>
-                            <input
-                                type="text"
-                                id="school"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="jobInfo" className="block font-semibold text-base mb-2">Job Information:</label>
-                            <input
-                                type="text"
-                                id="jobInfo"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                    </div>
+  const mutation = useMutation({
+    mutationFn: savePurchaseForm,
+    onSuccess: (data) => {
+      console.log({ serverResponse: data });
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label htmlFor="email" className="block font-semibold text-base mb-2">Email:</label>
-                            <input
-                                type="email"
-                                id="email"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="gender" className="block font-semibold text-base mb-2">Gender:</label>
-                            <select
-                                id="gender"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            >
-                                <option value="" disabled selected>Select Gender</option>
-                                <option value="Female">Female</option>
-                                <option value="Male">Male</option>
-                                <option value="Others">Other</option>
-                            </select>
-                        </div>
-                    </div>
+      toast.success("Form submitted successful");
+      navigate(
+        "/course/search-purchase-data?form_no=" +
+          data.coursePurchaseData.form_no +
+          "&phone_no=" +
+          data.coursePurchaseData.phone_no
+      );
+      // Handle successful registration (e.g., navigate to login)
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data.message || "Something went wrong");
+      // Handle registration error (e.g., display error message)
+    },
+  });
+  //
+  const onSubmit = (data) => {
+    // console.log({data,cartItems:getCartItems()})
+    const formData = new FormData();
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label htmlFor="presentAddress" className="block font-semibold text-base mb-2">Present Address:</label>
-                            <textarea
-                                id="presentAddress"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="permanentAddress" className="block font-semibold text-base mb-2">Permanent Address:</label>
-                            <textarea
-                                id="permanentAddress"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                    </div>
+    // Add courseId from cart[0] to the FormData
+    const courseId = getCartItems()[0]?.id; // Assuming course ID is available in cart[0]
+    formData.append("course_id", courseId);
+    formData.append("admission_date", new Date().toISOString());
+    formData.append("photo", data.studentPhoto); // File input handling
+    formData.append("name", data.name);
+    formData.append("father_name", data.fatherMotherName);
+    formData.append("father_phone_no", data.fatherMotherPhone);
+    formData.append("school_collage_name", data.schoolCollegeName);
+    formData.append("job_title", data.jobTitle);
+    formData.append("email", data.email);
+    formData.append("gender", data.gender);
+    formData.append("present_address", data.presentAddress);
+    formData.append("permanent_address", data.permanentAddress);
+    formData.append("nid_no", data.nidNo);
+    formData.append("phone_no", data.phone);
+    formData.append("local_guardian_name", data.localGuardianName);
+    formData.append("local_guardian_phone_no", data.localGuardianPhone);
+    formData.append("date_of_birth", data.dateOfBirth);
+    formData.append("blood_group", data.bloodGroup);
+    formData.append("course_fee", parseInt(getTotalPrice()));
+    formData.append("course_qty", getCartItems().length);
+    formData.append("total_course_fee", parseInt(getTotalPrice()));
+    formData.append("discount_course_fee", parseInt(getTotalPrice()));
+    formData.append("sub_total_course_fee", parseInt(getTotalPrice()));
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label htmlFor="nid" className="block font-semibold text-base mb-2">NID Number:</label>
-                            <input
-                                type="text"
-                                id="nid"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="mobile" className="block font-semibold text-base mb-2">Mobile No:</label>
-                            <input
-                                type="text"
-                                id="mobile"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                    </div>
+    mutation.mutate(formData); // Submit form data
+    // Handle form submission (e.g., API call)
+  };
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label htmlFor="guardianName" className="block font-semibold text-base mb-2">Local Guardian’s Name:</label>
-                            <input
-                                type="text"
-                                id="guardianName"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="dob" className="block font-semibold text-base mb-2">Date of Birth:</label>
-                            <input
-                                type="date"
-                                id="dob"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                    </div>
+  const onImageUpload = (file) => {
+    setValue("studentPhoto", file); // Register the image in the form state
+  };
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label htmlFor="bloodGroup" className="block font-semibold text-base mb-2">Blood Group:</label>
-                            <select
-                                id="bloodGroup"
-                                className="w-full border border-gray-300 rounded-md p-2"
-                            >
-                                <option value="" disabled selected>Select Blood Group</option>
-                                <option value="A+">A+</option>
-                                <option value="A-">A-</option>
-                                <option value="B+">B+</option>
-                                <option value="B-">B-</option>
-                                <option value="AB+">AB+</option>
-                                <option value="AB-">AB-</option>
-                                <option value="O+">O+</option>
-                                <option value="O-">O-</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+  // if (formData) {
+  //   return JSON.stringify(formData);
+  // }
 
-                <div className="m-mt_16px">
+  return (
+    <div className="py-4 px-2">
+      <FormProvider {...methods}>
+        <Title title="Checkout" />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* name / email / phone */}
+          <div className="flex w-full  items-center justify-center flex-wrap md:flex-nowrap gap-2">
+            <Input name="name" label="Name*" type="text" />{" "}
+            <Input name="email" label="Email*" type="email" />{" "}
+            <Input name="phone" label="Phone No*" type="text" />
+          </div>
 
+          {/* fatherMotherName/ fatherMotherPhone / schoolCollegeName*/}
 
-                    <div className="pt-p_16px">
-                        <div className="lg:flex items-start gap-3">
-                            <div className="w-full lg:w-[58%] bg-white border-2">
-                                <table className=" overflow-x-auto  w-full">
-                                    <thead>
-                                        <tr className="border-b-4 border-gray-300">
-                                            <th className="text-[14.4px] w-6/12 font-bold p-[7px] text-black">
-                                                Course
-                                            </th>
-                                            <th className="text-[14.4px] font-bold p-[7px] text-black">
-                                                Price
-                                            </th>
-                                            <th className="text-[14.4px] font-bold p-[7px] text-black">
-                                                Quantity
-                                            </th>
-                                            <th className="text-[14.4px] font-bold p-[7px] text-black">
-                                                Sub Total
-                                            </th>
-                                        </tr>
-                                    </thead>
+          <div className="flex w-full  items-center justify-center gap-2 flex-wrap md:flex-nowrap">
+            <Input name="fatherMotherName" label="Father/Mother Name*" type="text" />
+            <Input name="fatherMotherPhone" label="Father/Mother Phone*" type="text" />
+            <Input name="schoolCollegeName" label="School/College Name*" type="text" />
+          </div>
 
-                                    <tbody className="overflow-x-auto ">
+          {/* jobTitle /localGuardianName/localGuardianPhone  */}
 
-                                        <tr className="border-b border-gray-300 overflow-x-auto">
-                                            <td>
-                                                <div className="flex items-center justify-center ">
-                                                    <div className="w-[20%] text-center flex items-center justify-center ">
-                                                        <RiDeleteBin5Line
-                                                            className="text-xl hover:text-footer_color cursor-pointer"
+          <div className="flex w-full  items-center justify-center gap-2 flex-wrap md:flex-nowrap">
+            {" "}
+            <Input name="jobTitle" label="Job Title*" type="text" />
+            <Input name="localGuardianName" label="Local Guardian Name*" type="text" />
+            <Input name="localGuardianPhone" label="Local Guardian Phone*" type="text" />
+          </div>
 
-                                                        />
-                                                    </div>
-                                                    <div className="flex flex-col text-center justify-center items-center py-2  w-[80%]">
-                                                        <div className="mask">
-                                                            <img
-                                                                className="h-[40px] w-[70px]"
-                                                                src=''
-                                                                alt='Course'
-                                                            />
-                                                        </div>
-                                                        <p className="text-[14.4px] px-[7px] text-center flex ">
-                                                            Course name  <span className="hidden lg:flex ">- unit name</span>
-                                                        </p>
-                                                    </div>
+          {/* nid/birth */}
 
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
-                                                    discount price
-                                                </p>
-                                            </td>
-                                            <td>
-                                                <div className="flex justify-center">
-                                                    <div className="border">
-                                                        <button
-                                                            className="px-4 w-[30px] font-bold font_standard my-1.5"
+          <div className="flex w-full  items-center justify-center gap-2 flex-wrap md:flex-nowrap">
+            <Input name="nidNo" label="NID No*" type="text" {...register("nidNo")} />
+            <Input
+              name="dateOfBirth"
+              label="Date Of Birth*"
+              type="text"
+              placeholder="YYYY-MM-DD"
+            />
+          </div>
 
-                                                        >
-                                                            -
-                                                        </button>
-                                                    </div>
-                                                    <div className="border-y">
-                                                        <input
-                                                            type="number"
-                                                            className="font-bold w-[30px] lg:w-[60px] font_standard px-2 text-center mx-auto h-full"
+          {/* gender /bloodGroup */}
 
-                                                        />
-                                                    </div>
-                                                    <div className="border">
-                                                        <button
-                                                            className="px-4 w-[30px] font-bold font_standard my-1.5"
+          <div className="flex w-full  items-center justify-center gap-2 flex-wrap md:flex-nowrap">
+            <Select name="gender" label="Gender*" options={genderOptions} />
+            <Select name="bloodGroup" label="Blood Group*" options={bloodGroupOptions} />
+          </div>
 
-                                                        >
-                                                            +
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
+          {/* address */}
 
-                                                    discount price * quantity
-                                                </p>
-                                            </td>
-                                        </tr>
+          <div className="flex w-full  items-center justify-center gap-2 flex-wrap md:flex-nowrap">
+            {" "}
+            <Input name="presentAddress" label="Present Address*" type="text" />
+            <Input name="permanentAddress" label="Permanent Address*" type="text" />
+          </div>
+          <div className="w-full">
+            <ImageInput
+              onImageUpload={onImageUpload}
+              name="studentPhoto"
+              register={register}
+              error={errors.studentPhoto}
+              clearErrors={clearErrors}
+            />
+          </div>
+          {/* photo end */}
 
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className="lg:w-[41%] bg-white border-2 ">
-                                <div className="px-[30px]">
-                                    <h2 className="font-bold text-start text-text_medium pt-2 pb-1 border-b-2 border-black">
-                                        Cart Summary
-                                    </h2>
-                                    <div className="py-3 flex justify-between border-b border-gray-300">
-                                        <p className="text-black font-bold">Total Price</p>
-                                        <p className="text-black font-bold">
+          <button type="submit" className="btn btn-primary" disabled={mutation.isPending}>
+            {mutation.isPending ? (
+              <div className="flex items-center gap-2">
+                {" "}
+                <span className="loading loading-spinner"></span>
+                Submitting...
+              </div>
+            ) : (
+              "Submit"
+            )}
+          </button>
 
-                                        </p>
-                                    </div>
-
-                                    <Link
-
-                                        state={"bdt"}
-                                        className="font-medium text-black mb-2 border-2 hover:bg-[#D2C5A2] duration-300 py-2 px-4  block text-center mx-auto w-full"
-                                    >
-                                        Submit
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
-           
-        </div>
-    );
+          <Link className="text-blue-400 block underline" to="/course/search-purchase-data">Find Purchase Items</Link>
+        </form>
+      </FormProvider>
+      {/* Card */}
+      <Cart />
+    </div>
+  );
 };
 
-export default Checkout;
+export default CheckoutForm;
