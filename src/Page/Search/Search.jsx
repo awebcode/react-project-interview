@@ -61,7 +61,7 @@ const Search = () => {
   return (
     <FormProvider {...methods}>
       <Title title="Search Purchase" className="text-center" />
-      <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto">
+      <form onSubmit={handleSubmit(onSubmit)} className="container max-w-md mx-auto">
         <Input name="form_no" label="Form Number" type="text" control={control} />
         <Input name="phone_no" label="Phone Number" type="text" control={control} />
         <button

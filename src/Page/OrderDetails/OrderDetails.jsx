@@ -36,13 +36,13 @@ const OrderDetails = ({ data }) => {
 
   return (
     <>
-      <Title title="Latest Purchase Details" className="!text-3xl" />
+      <Title title="Latest Purchase Details" className="text-xl md:!text-3xl" />
       <div className="w-full p-4 m-2 border bg-[#D2C5A2] border-gray-300 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Order Details</h2>
 
-        <div className="grid grid-cols-2 divide-x divide-gray-400 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:divide-x divide-gray-400 gap-4">
           {/* Column 1 */}
-          <div className="space-y-2 pr-4">
+          <div className="space-y-2 md:pr-4">
             <p>
               <strong>Name:</strong> {storedData.name}
             </p>
@@ -64,7 +64,7 @@ const OrderDetails = ({ data }) => {
           </div>
 
           {/* Column 2 */}
-          <div className="space-y-2 pl-4">
+          <div className="space-y-2 md:pl-4">
             <p>
               <strong>Admission Date:</strong> {storedData.admission_date}
             </p>

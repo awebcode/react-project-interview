@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 const CourseDetails = ({ course }) => {
   return (
-    <div className="w-full p-4 border border-gray-300  rounded-lg shadow-md mt-8">
+    <div className="w-full p-4 overflow-x-auto border border-gray-300  rounded-lg shadow-md mt-8">
       <h2 className="text-xl font-semibold mb-4">Course Details</h2>
       <table className="w-full table-auto border-collapse border border-gray-400">
         <thead>

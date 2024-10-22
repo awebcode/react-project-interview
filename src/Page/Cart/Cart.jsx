@@ -19,7 +19,7 @@ const Cart = ({parentButton}) => {
     }
 
   return (
-    <div className="m-mt_16px">
+    <div className="md:m-mt_16px ">
       <h1 className="text-sm text-start md:text-text_xl lg:py-0 font-bold">Cart</h1>
       <div className="pt-p_16px">
         <div className="lg:flex items-start gap-3">

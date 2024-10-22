@@ -6,6 +6,14 @@ export default {
   ],
   theme: {
     extend: {
+      container: {
+        center: true,
+        padding: "1rem",
+        screens: {
+          "2xl": "1400px",
+
+        },
+      },
       colors: {
         primary: '#F3F4F6',
         secondary: '#0771BA',
