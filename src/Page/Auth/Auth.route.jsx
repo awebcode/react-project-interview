@@ -2,7 +2,7 @@ import Login from "./Login";
 import Register from "./Register";
 import VerifyOTP from "./VerifyOtp";
 import ForgotPassword from "./ForgotPassword";
-
+import UserProfile from "./UserProfile";
 export const AuthRoutes = [
   {
     path: "/login",
@@ -19,6 +19,10 @@ export const AuthRoutes = [
   {
     path: "/forgot-password",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/profile",
+    element: <UserProfile />,
   },
 ];
 //   Ending auth

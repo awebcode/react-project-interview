@@ -11,6 +11,7 @@ import Checkout from "../Page/Checkout/Checkout";
 import Search from "../Page/Search/Search";
 import { AuthRoutes } from "../Page/Auth/Auth.route";
 import SearchPurchaseFormData from "../Page/Checkout/SearchPurchaseFormData";
+
 const Router = createBrowserRouter([
   {
     path: "/",
@@ -53,6 +54,7 @@ const Router = createBrowserRouter([
         path: "/order-details",
         element: <OrderDetails />,
       },
+      
     ],
   },
   {
