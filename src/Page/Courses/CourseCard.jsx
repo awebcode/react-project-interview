@@ -1,6 +1,7 @@
 import PropTypes from "prop-types"; // Import PropTypes
 import useCartStore from "../../Hooks/useCartStore";
 import { useTransition } from "react";
+import { toast } from "react-toastify";
 const CourseCard = ({
   id,
   course_name = "Unnamed Course", // Default value if course_name is missing
@@ -18,8 +19,14 @@ const CourseCard = ({
   const discount = Number(discount_price);
   const discountPercentage =
     regular > 0 ? Math.round(((regular - discount) / regular) * 100) : 0;
+  
+  const itemInCart = cart.find((item) => item.id === id);
 
   const handleAddToCart = () => {
+    if (getTotalItems() > 0) {
+      toast.info("You can only add one course at a time");
+      return;
+    }
     startTransition(() => {
       addItem({
         id,
@@ -33,7 +40,6 @@ const CourseCard = ({
     });
   };
 
-  const itemInCart = cart.find((item) => item.id === id);
   const finalPrice = itemInCart
     ? itemInCart.discount_price * itemInCart.course_qty
     : discount_price;
@@ -81,14 +87,14 @@ const CourseCard = ({
 
         <div className="mt-4 flex gap-2">
           {itemInCart ? (
-            <button onClick={() => removeItem(id)} className="btn btn-warning w-full">
+            <button onClick={() => removeItem(id)} className="btn btn-secondary w-full">
               Remove From Cart
             </button>
           ) : (
             <button
               onClick={handleAddToCart}
               className="btn btn-primary w-full disabled:cursor-not- disabled:bg-blue-400 disabled:text-white"
-              disabled={isAdding || getTotalItems() > 0}
+              disabled={isAdding}
             >
               {isAdding ? "Adding to Cart..." : "Add To Cart"}
             </button>

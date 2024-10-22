@@ -4,17 +4,17 @@ import useCartStore from "../../Hooks/useCartStore";
 import PropTypes from "prop-types";
 const CartCard = ({ item }) => {
   const { removeItem,
-    // increaseItemQuantity,
-    // decreaseItemQuantity
+    increaseItemQuantity,
+    decreaseItemQuantity
   } = useCartStore();
 
-  // const handleIncrease = () => {
-  //   increaseItemQuantity(item.id);
-  // };
+  const handleIncrease = () => {
+    increaseItemQuantity(item.id);
+  };
 
-  // const handleDecrease = () => {
-  //   decreaseItemQuantity(item.id);
-  // };
+  const handleDecrease = () => {
+    decreaseItemQuantity(item.id);
+  };
 
   const handleRemove = () => {
     removeItem(item.id);
@@ -51,7 +51,7 @@ const CartCard = ({ item }) => {
           {item.discount_price} {/* Assuming item has a discount_price property */}
         </p>
       </td>
-      {/* <td>
+      <td>
         <div className="flex justify-center">
           <div className="border">
             <button
@@ -78,7 +78,7 @@ const CartCard = ({ item }) => {
             </button>
           </div>
         </div> 
-      </td>*/}
+      </td>
       <td>
         <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
           {item.discount_price * item.course_qty} {/* Calculate subtotal */}
