@@ -18,6 +18,10 @@ const Router = createBrowserRouter([
     children: [
       // auth routes
       ...AuthRoutes,
+      {
+        path: "/",
+        element: <Courses />,
+      },
 
       {
         path: "/course",
