@@ -72,6 +72,10 @@ const Courses = () => {
           showPrevNextJumpers
           hideOnSinglePage
           className="custom-pagination"
+          nextIcon=">>"
+          prevIcon="<<"
+          jumpPrevIcon=">>>"
+          jumpNextIcon="<<<"
         />
       </div>
     </div>
