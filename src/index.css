@@ -411,7 +411,7 @@ input[type="checkbox"]:checked::after {
 }
 
 .custom-pagination .rc-pagination-item-active {
-  @apply bg-blue-500 text-black border-blue-500;
+  @apply bg-blue-300  border-blue-500;
 }
 
 .custom-pagination .rc-pagination-jump-next,
